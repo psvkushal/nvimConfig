@@ -143,10 +143,50 @@ require("lazy").setup({
 			end,
 
 		}, {
-			-- I like the suggestion it gives, there are alternatives like hydra.nvim etc lets try it in next run
+			-- I like the suggestion it gives, there are alternatives like hydra.nvim etc lets try it in next run, although itseems there is hydra mode maybe check that out 
 			"folke/which-key.nvim",
+			-- there might be additional settings might be required
+		},{
+			-- https://github.com/nvim-telescope/telescope.nvim/wiki/Extensions go through these extensions and see if you can add something useful here
+			-- :h telescope.mappings to look into how to move in the windows of telescope picker and telescope.pickers.layout to arrange the layout of telescope
+			'nvim-telescope/telescope.nvim', version = '*',
+			dependencies = {
+				'nvim-lua/plenary.nvim',
+				-- optional but recommended
+				{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+			},
+			opts = {
+				defaults = {
+					-- Default configuration for telescope goes here:
+					-- config_key = value,
+					wrap_results = true,
+					mappings = {
+						i = {
+							-- map actions.which_key to <C-h> (default: <C-/>)
+							-- actions.which_key shows the mappings for your picker,
+							-- e.g. git_{create, delete, ...}_branch for the git_branches picker
+							-- ["<C-h>"] = "which_key"
+							-- <c-u> and <c-d> are mapped for moving up and down similar to how you move in buffer but, having mapped c-h and c-l for moving left and right, I am moving everything to the left
+							["<C-k>"] = "preview_scrolling_up",
+							["<C-j>"] = "preview_scrolling_down",
+							["<C-h>"] = "preview_scrolling_left",
+							["<C-l>"] = "preview_scrolling_right",
+						},
+					},
+				},
+				-- There are pickers and extensions config which is better to add based on whats required, I think I would like to add the image one, to view through the images
+				-- currently there seems to be a way to scroll through the results buffer I want to see how it can be done or use different mapping
+			},
+			config = function(_, opts)
+				require('telescope').setup(opts)
+				local builtin = require('telescope.builtin')
+				vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Telescope find files' })
+				vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Telescope live grep' })
+				vim.keymap.set('n', '<leader>sr', builtin.resume, {desc = 'Telesceop resume search'})
+				vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Telescope buffers' })
+				vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Telescope help tags' })
+			end,
 		}
-
 	},
 	-- if you dont need the below options you can remove the spec and below and just pass the list of plugins
 	-- Configure any other settings here. See the documentation for more details.
