@@ -3,6 +3,7 @@ Thinking of adding the following
 
 - [x] gruvbox colorscheme
 - [x] whichkey
+    - [ ] for whichKey see how to go about adding dev icons, ideally something across the terminal would be great 
 - [ ] completions
     - [ ] I want good autocompletions on what I am using for bash, go, python, c lang
 - [ ] telescope
@@ -17,3 +18,5 @@ Thinking of adding the following
     - [x] setup gitsigns, with userful hunk movement and showing up of gitblame
     - [ ] not sure what fugitive might give so lets see, later
 - [ ] oil.nvim want to try this out
+- [ ] image support
+    - kitty seems plenty fast with image viewing, but image.nvim seems very slow in displaying the image in my terminal, lets see some videos if something can be done

@@ -332,7 +332,7 @@ require("lazy").setup({
 						else
 							gitsigns.nav_hunk('next')
 						end
-					end, {desc = "move to next git hunk in buffer"})
+					end, {desc = "move to next hunk in buffer"})
 
 					map('n', '[c', function()
 						if vim.wo.diff then
@@ -343,7 +343,7 @@ require("lazy").setup({
 					end, {desc = "move to prev hunk in buffer"})
 
 					-- Actions
-					map('n', '<leader>hs', gitsigns.stage_hunk, {desc = "git toggle hunk staging"})
+					map('n', '<leader>hs', gitsigns.stage_hunk, {desc = "toggle hunk staging"})
 					map('n', '<leader>hr', gitsigns.reset_hunk, {desc = "reset hunk"})
 
 					map('v', '<leader>hs', function()
@@ -356,8 +356,8 @@ require("lazy").setup({
 
 					map('n', '<leader>hS', gitsigns.stage_buffer, {desc = "stage buffer"})
 					map('n', '<leader>hR', gitsigns.reset_buffer, {desc = "reset buffer"})
-					map('n', '<leader>hp', gitsigns.preview_hunk, {desc = "preview buffer"})
-					map('n', '<leader>hi', gitsigns.preview_hunk_inline, {desc = "preview buffer inline"})
+					map('n', '<leader>hp', gitsigns.preview_hunk, {desc = "preview hunk"})
+					map('n', '<leader>hi', gitsigns.preview_hunk_inline, {desc = "preview hunk inline"})
 					map('n', '<leader>hU', gitsigns.reset_buffer_index, {desc = "unstage buffer"})
 
 					map('n', '<leader>hb', function()
