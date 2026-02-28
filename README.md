@@ -6,7 +6,7 @@ Thinking of adding the following
 - [ ] completions
     - [ ] I want good autocompletions on what I am using for bash, go, python, c lang
 - [ ] telescope
-    - [ ] installation done
+    - [x] installation done
     - [x] figure out how to scroll through results buffer and preview buffer
         - got confused between results and preview buffer mapped to values which feels comfortable
     - [x] add support for viewing through images
@@ -14,4 +14,6 @@ Thinking of adding the following
 - [ ] LSP functionality
 
 - [ ] git fugitive or neovim equivalent
+    - [x] setup gitsigns, with userful hunk movement and showing up of gitblame
+    - [ ] not sure what fugitive might give so lets see, later
 - [ ] oil.nvim want to try this out
