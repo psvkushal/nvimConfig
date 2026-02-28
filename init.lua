@@ -132,7 +132,16 @@ require("lazy").setup({
 				invert_tabline = false,
 				inverse = true, -- invert background for search, diffs, statuslines and errors
 				contrast = "", -- can be "hard", "soft" or empty string
-				palette_overrides = {},
+				palette_overrides = {
+					-- Okay if I want to feel like darker gruv lets use this options thanks claude
+					-- hard dark bg is normally #1d2021, go even darker:
+					-- dark0_hard = "#0d1010",   -- main background
+					-- dark0      = "#0d1010",   -- used in some places too
+					-- dark0_soft = "#181818",   -- softer variant
+
+					-- -- you can also darken the "panels" background (statusline, sidebar, etc.):
+					-- dark1 = "#1a1a1a",        -- normally #3c3836
+				},
 				overrides = {},
 				dim_inactive = false,
 				transparent_mode = false,
@@ -328,7 +337,7 @@ require("lazy").setup({
 					-- Navigation
 					map('n', ']c', function()
 						if vim.wo.diff then
-							vim.cmd.normal({']h', bang = true})
+							vim.cmd.normal({']c', bang = true})
 						else
 							gitsigns.nav_hunk('next')
 						end
@@ -336,7 +345,7 @@ require("lazy").setup({
 
 					map('n', '[c', function()
 						if vim.wo.diff then
-							vim.cmd.normal({'[h', bang = true})
+							vim.cmd.normal({'[c', bang = true})
 						else
 							gitsigns.nav_hunk('prev')
 						end

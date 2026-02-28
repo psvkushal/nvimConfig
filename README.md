@@ -2,7 +2,8 @@ retrying neovim config by reading around sources from kickstart, lazy docs and p
 Thinking of adding the following
 
 - [x] gruvbox colorscheme
-    - [ ] see if its possible to make the background darker in gruvbox as close to black as possible
+    - [x] see if its possible to make the background darker in gruvbox as close to black as possible
+        - did this but I think lets use it when I am bored of this one
 - [x] whichkey
     - [ ] for whichKey see how to go about adding dev icons, ideally something across the terminal would be great 
 - [ ] completions
