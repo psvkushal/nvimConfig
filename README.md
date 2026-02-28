@@ -9,7 +9,8 @@ Thinking of adding the following
     - [ ] installation done
     - [x] figure out how to scroll through results buffer and preview buffer
         - got confused between results and preview buffer mapped to values which feels comfortable
-    - [ ] add support for viewing through images
+    - [x] add support for viewing through images
+        - not satisfied but for now its okay IG, lets complete the others and come back to this one
 - [ ] LSP functionality
 
 - [ ] git fugitive or neovim equivalent
