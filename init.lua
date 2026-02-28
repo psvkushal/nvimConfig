@@ -1,17 +1,17 @@
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
+	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out, "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -152,8 +152,9 @@ require("lazy").setup({
 			'nvim-telescope/telescope.nvim', version = '*',
 			dependencies = {
 				'nvim-lua/plenary.nvim',
-				-- optional but recommended
+				'nvim-lua/popup.nvim',
 				{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+				'nvim-telescope/telescope-media-files.nvim',
 			},
 			opts = {
 				defaults = {
@@ -179,6 +180,7 @@ require("lazy").setup({
 			},
 			config = function(_, opts)
 				require('telescope').setup(opts)
+
 				local builtin = require('telescope.builtin')
 				vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Telescope find files' })
 				vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Telescope live grep' })
@@ -186,6 +188,64 @@ require("lazy").setup({
 				vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Telescope buffers' })
 				vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Telescope help tags' })
 			end,
+		},{
+			-- sets up image support
+			"3rd/image.nvim",
+			opts = {
+				backend = "kitty", -- or "ueberzug" or "sixel"
+				processor = "magick_cli", -- or "magick_rock"
+				integrations = {
+					markdown = {
+						enabled = true,
+						clear_in_insert_mode = false,
+						download_remote_images = true,
+						only_render_image_at_cursor = false,
+						only_render_image_at_cursor_mode = "popup", -- or "inline"
+						floating_windows = false, -- if true, images will be rendered in floating markdown windows
+						filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
+					},
+					asciidoc = {
+						enabled = true,
+						clear_in_insert_mode = false,
+						download_remote_images = true,
+						only_render_image_at_cursor = false,
+						only_render_image_at_cursor_mode = "popup",
+						floating_windows = false,
+						filetypes = { "asciidoc", "adoc" },
+					},
+					neorg = {
+						enabled = true,
+						filetypes = { "norg" },
+					},
+					rst = {
+						enabled = true,
+					},
+					typst = {
+						enabled = true,
+						filetypes = { "typst" },
+					},
+					html = {
+						enabled = false,
+					},
+					css = {
+						enabled = false,
+					},
+				},
+				max_width = nil,
+				max_height = nil,
+				max_width_window_percentage = nil,
+				max_height_window_percentage = 50,
+				scale_factor = 1.0,
+				window_overlap_clear_enabled = false, -- toggles images when windows are overlapped
+				window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "snacks_notif", "scrollview", "scrollview_sign" },
+				editor_only_render_when_focused = false, -- auto show/hide images when the editor gains/looses focus
+				tmux_show_only_in_active_window = false, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
+				hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, -- render image files as images when opened
+			},
+			config = function(_, opts)
+				require('image').setup(opts)
+			end
+
 		}
 	},
 	-- if you dont need the below options you can remove the spec and below and just pass the list of plugins
