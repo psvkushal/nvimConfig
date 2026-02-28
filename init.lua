@@ -156,6 +156,15 @@ require("lazy").setup({
 				{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 				'nvim-telescope/telescope-media-files.nvim',
 			},
+			extensions = {
+				media_files = {
+					-- filetypes whitelist
+					-- defaults to {"png", "jpg", "mp4", "webm", "pdf"}
+					filetypes = {"png", "webp", "jpg", "jpeg", "gif", "mp4"},
+					-- find command (defaults to `fd`)
+					find_cmd = "rg"
+				}
+			},
 			opts = {
 				defaults = {
 					-- Default configuration for telescope goes here:
@@ -179,6 +188,8 @@ require("lazy").setup({
 				-- currently there seems to be a way to scroll through the results buffer I want to see how it can be done or use different mapping
 			},
 			config = function(_, opts)
+
+				local media_file = require('telescope').load_extension('media_files')
 				require('telescope').setup(opts)
 
 				local builtin = require('telescope.builtin')
@@ -187,6 +198,12 @@ require("lazy").setup({
 				vim.keymap.set('n', '<leader>sr', builtin.resume, {desc = 'Telesceop resume search'})
 				vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Telescope buffers' })
 				vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Telescope help tags' })
+				-- ideally would like this to be present in the files itself but for now having a intermediate
+				-- I dont like the way its rendering the image with loosing the info, need to see if there is a config for this
+				-- when I tried this setup with configuration recepie in the telescope nvim wiki, I got the error of this channel is already being in use, IG I need to understand the code better to implement this
+				-- I think seperate extension for this is not required, I think I can write a single file for this and do it, just need to understand the asynchronous jobs and telescope hooks
+				vim.keymap.set('n', '<leader>sm', media_file.media_files, {desc = 'search through media files'})
+
 			end,
 		},{
 			-- sets up image support
@@ -240,7 +257,7 @@ require("lazy").setup({
 				window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "snacks_notif", "scrollview", "scrollview_sign" },
 				editor_only_render_when_focused = false, -- auto show/hide images when the editor gains/looses focus
 				tmux_show_only_in_active_window = false, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
-				hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, -- render image files as images when opened
+				-- hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, -- render image files as images when opened
 			},
 			config = function(_, opts)
 				require('image').setup(opts)
