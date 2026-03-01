@@ -156,246 +156,216 @@ require("lazy").setup({
 			"folke/which-key.nvim",
 			-- there might be additional settings might be required
 		},{
-			-- https://github.com/nvim-telescope/telescope.nvim/wiki/Extensions go through these extensions and see if you can add something useful here
-			-- :h telescope.mappings to look into how to move in the windows of telescope picker and telescope.pickers.layout to arrange the layout of telescope
-			'nvim-telescope/telescope.nvim', version = '*',
-			dependencies = {
-				'nvim-lua/plenary.nvim',
-				'nvim-lua/popup.nvim',
-				{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-				'nvim-telescope/telescope-media-files.nvim',
-			},
-			extensions = {
-				media_files = {
-					-- filetypes whitelist
-					-- defaults to {"png", "jpg", "mp4", "webm", "pdf"}
-					filetypes = {"png", "webp", "jpg", "jpeg", "gif", "mp4"},
-					-- find command (defaults to `fd`)
-					find_cmd = "rg"
-				}
-			},
+			"folke/snacks.nvim",
 			opts = {
-				defaults = {
-					-- Default configuration for telescope goes here:
-					-- config_key = value,
-					wrap_results = true,
-					mappings = {
-						i = {
-							-- map actions.which_key to <C-h> (default: <C-/>)
-							-- actions.which_key shows the mappings for your picker,
-							-- e.g. git_{create, delete, ...}_branch for the git_branches picker
-							-- ["<C-h>"] = "which_key"
-							-- <c-u> and <c-d> are mapped for moving up and down similar to how you move in buffer but, having mapped c-h and c-l for moving left and right, I am moving everything to the left
-							["<C-k>"] = "preview_scrolling_up",
-							["<C-j>"] = "preview_scrolling_down",
-							["<C-h>"] = "preview_scrolling_left",
-							["<C-l>"] = "preview_scrolling_right",
+				image = {},
+				picker = {
+					win = {
+						preview = {
+							wo = {
+								wrap = false, -- hoping this would work but was not working
+							},
+						},
+						input = {
+							keys = {
+								["<c-k>"] = { "preview_scroll_up", mode = { "n", "i" } },
+								["<c-j>"] = { "preview_scroll_down", mode = { "n", "i" } },
+								-- if wrapping was there the below would have been useful for now IG lets ignore these
+								["<c-l>"] = { "preview_scroll_left", mode = { "n", "i" } },
+								["<c-h>"] = { "preview_scroll_righ", mode = { "n", "i" } },
+							},
 						},
 					},
 				},
-				-- There are pickers and extensions config which is better to add based on whats required, I think I would like to add the image one, to view through the images
-				-- currently there seems to be a way to scroll through the results buffer I want to see how it can be done or use different mapping
+				explorer = {},
+			},
+			keys = {
+				-- shortcuts which I like or excited and useful
+				{ "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
+				{ "<leader>sr", function() Snacks.picker.recent() end, desc = "Recent" }, -- yeah this is cool
+				{ "<leader>sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } }, -- its between yeah this is useful in the sense like I like the preview I get, but I think doing it nvim default way might be better
+				{ '<leader>s"', function() Snacks.picker.registers() end, desc = "Registers" }, -- interesting not sure if useful
+				{ '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" }, -- interesting can include in workflow instead of using up or down key
+				{ "<leader>sa", function() Snacks.picker.autocmds() end, desc = "Autocmds" }, -- not used autocmd much, maybe I can understand and see if they can be included
+				{ "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" }, -- yeah dont use cmds much, commands which I use most are converted into shortcuts so not sure how useful this will be but lets see
+				{ "<leader>sC", function() Snacks.picker.commands() end, desc = "Commands" }, -- same as above, but I think this might be mroe useful
+				{ "<leader>sH", function() Snacks.picker.highlights() end, desc = "Highlights" }, -- okay not sure what is highlights maybe look into this, I think this one can be made redundant for now by using search commands and using that command, this feels like something I rarely use
+				{ "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" }, -- okay this is what I wanted to do for long time and itseems to be already present 😺 yeah this is good
+				{ "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" }, -- yeah searching for keymaps is good, incase I forgot just for this scenario, I dont wanna be sarcastic here🤷‍♀️
+				{ "<leader>sM", function() Snacks.picker.man() end, desc = "Man Pages" },
+				{ "<leader>sp", function() Snacks.picker.lazy() end, desc = "Search for Plugin Spec" },
+				{ "<leader>sl", function() Snacks.picker.loclist() end, desc = "Location List" },
+				{ "<leader>sq", function() Snacks.picker.qflist() end, desc = "Quickfix List" }, -- the above 2 I need to understand before I can fully leverage them IG
+				{ "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" }, -- not sure what it does -- okay this might be powerful going back to specifc thing yeah thats crazy 
+
+				-- already use it so its useful no new emtion
+				{ "<leader><space>", function() Snacks.picker.buffers() end, desc = "Buffers" },
+				{ "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
+				{ "<leader>sf", function() Snacks.picker.files() end, desc = "Find Files" },
+				{ "<leader>sG", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" }, --  not exactly used but need to look for different command
+				{ "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
+				{ "<leader>sR", function() Snacks.picker.resume() end, desc = "Resume" },
+				
+				-- shortcuts not so sure might be useful
+				{ "<leader>sF", function() Snacks.picker.smart() end, desc = "Smart Find Files" }, -- its like do I need entire global search sometimes useful
+				{ "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" }, -- I am not sure what the notification maybe if llm is integrated might be useful?
+				{ "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" }, --- its good to just open and read this but like really needed not sure?
+				{ "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" }, -- mostly will delete it, will keep it for now, if there is other command which needs this shortcut then will remove this
+				{ "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" }, -- yeah interesting but eeehh is it useful for me right now?
+				{ "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches" }, -- already have git not so sure
+				{ "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log" },
+				{ "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
+				{ "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+				{ "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
+				{ "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" }, -- already have it from git signs, but the way I can move to other things is interesting, IG I can avoid quickfixlist and use this, but if in quickfixlist I can keep moving between buffers then that would be more cool than this one
+				{ "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
+				{ "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics" },
+				{ "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
+				{ "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" }, -- going through colorscheme in command line seems better, but IG this one switches the color scheme faster, so maybe useful?
+
+				-- there should be a vim or nvim default way of doing this instead of using this one
+				{ "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" }, -- oil might be better here I feel
+				{ "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
+				{ "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
+
+				-- need to setup LSP to figure out if they are useful
+				{ "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
+				{ "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
+				{ "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
+				{ "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
+				{ "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition" },
+				{ "gai", function() Snacks.picker.lsp_incoming_calls() end, desc = "C[a]lls Incoming" },
+				{ "gao", function() Snacks.picker.lsp_outgoing_calls() end, desc = "C[a]lls Outgoing" },
+				{ "<leader>ss", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
+				{ "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
+
 			},
 			config = function(_, opts)
-
-				local media_file = require('telescope').load_extension('media_files')
-				require('telescope').setup(opts)
-
-				local builtin = require('telescope.builtin')
-				vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Telescope find files' })
-				vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Telescope live grep' })
-				vim.keymap.set('n', '<leader>sr', builtin.resume, {desc = 'Telesceop resume search'})
-				vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = 'Telescope buffers' })
-				vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Telescope help tags' })
-				-- ideally would like this to be present in the files itself but for now having a intermediate
-				-- I dont like the way its rendering the image with loosing the info, need to see if there is a config for this
-				-- when I tried this setup with configuration recepie in the telescope nvim wiki, I got the error of this channel is already being in use, IG I need to understand the code better to implement this
-				-- I think seperate extension for this is not required, I think I can write a single file for this and do it, just need to understand the asynchronous jobs and telescope hooks
-				vim.keymap.set('n', '<leader>sm', media_file.media_files, {desc = 'search through media files'})
-
-			end,
+				require("snacks").setup(opts)
+			end
 		},{
-			-- sets up image support
-			-- slow loading when opening a file with nvim know that is wrong way to go about it, but want to see it blazingly fast, see if something can be done other plugin or make it faster
-			"3rd/image.nvim",
-			opts = {
-				backend = "kitty", -- or "ueberzug" or "sixel"
-				processor = "magick_cli", -- or "magick_rock"
-				integrations = {
-					markdown = {
-						enabled = true,
-						clear_in_insert_mode = false,
-						download_remote_images = true,
-						only_render_image_at_cursor = false,
-						only_render_image_at_cursor_mode = "popup", -- or "inline"
-						floating_windows = false, -- if true, images will be rendered in floating markdown windows
-						filetypes = { "markdown", "vimwiki" }, -- markdown extensions (ie. quarto) can go here
+				"lewis6991/gitsigns.nvim",
+				opts = {
+					signs = {
+						add          = { text = '+' },
+						change       = { text = '┃' },
+						delete       = { text = '_' },
+						topdelete    = { text = '‾' },
+						changedelete = { text = '~' },
+						untracked    = { text = '┆' },
 					},
-					asciidoc = {
-						enabled = true,
-						clear_in_insert_mode = false,
-						download_remote_images = true,
-						only_render_image_at_cursor = false,
-						only_render_image_at_cursor_mode = "popup",
-						floating_windows = false,
-						filetypes = { "asciidoc", "adoc" },
+					signs_staged = {
+						add          = { text = '+' },
+						change       = { text = '┃' },
+						delete       = { text = '_' },
+						topdelete    = { text = '‾' },
+						changedelete = { text = '~' },
+						untracked    = { text = '┆' },
 					},
-					neorg = {
-						enabled = true,
-						filetypes = { "norg" },
+					signs_staged_enable = true,
+					signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+					numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
+					linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+					word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+					watch_gitdir = {
+						follow_files = true
 					},
-					rst = {
-						enabled = true,
+					auto_attach = true,
+					attach_to_untracked = false,
+					current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+					current_line_blame_opts = {
+						virt_text = true,
+						virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+						delay = 1000,
+						ignore_whitespace = false,
+						virt_text_priority = 100,
+						use_focus = true,
 					},
-					typst = {
-						enabled = true,
-						filetypes = { "typst" },
-					},
-					html = {
-						enabled = false,
-					},
-					css = {
-						enabled = false,
+					current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
+					sign_priority = 6,
+					update_debounce = 100,
+					status_formatter = nil, -- Use default
+					max_file_length = 40000, -- Disable if file is longer than this (in lines)
+					preview_config = {
+						-- Options passed to nvim_open_win
+						style = 'minimal',
+						relative = 'cursor',
+						row = 0,
+						col = 1
 					},
 				},
-				max_width = nil,
-				max_height = nil,
-				max_width_window_percentage = nil,
-				max_height_window_percentage = 50,
-				scale_factor = 1.0,
-				window_overlap_clear_enabled = false, -- toggles images when windows are overlapped
-				window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "snacks_notif", "scrollview", "scrollview_sign" },
-				editor_only_render_when_focused = false, -- auto show/hide images when the editor gains/looses focus
-				tmux_show_only_in_active_window = false, -- auto show/hide images in the correct Tmux window (needs visual-activity off)
-				-- hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, -- render image files as images when opened
-			},
-			config = function(_, opts)
-				require('image').setup(opts)
-			end,
+				config = function(_, opts)
+					opts.on_attach = function(bufnr)
+						local gitsigns = require('gitsigns')
 
-		},{
-			"lewis6991/gitsigns.nvim",
-			opts = {
-				signs = {
-					add          = { text = '+' },
-					change       = { text = '┃' },
-					delete       = { text = '_' },
-					topdelete    = { text = '‾' },
-					changedelete = { text = '~' },
-					untracked    = { text = '┆' },
-				},
-				signs_staged = {
-					add          = { text = '+' },
-					change       = { text = '┃' },
-					delete       = { text = '_' },
-					topdelete    = { text = '‾' },
-					changedelete = { text = '~' },
-					untracked    = { text = '┆' },
-				},
-				signs_staged_enable = true,
-				signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
-				numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
-				linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
-				word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
-				watch_gitdir = {
-					follow_files = true
-				},
-				auto_attach = true,
-				attach_to_untracked = false,
-				current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
-				current_line_blame_opts = {
-					virt_text = true,
-					virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-					delay = 1000,
-					ignore_whitespace = false,
-					virt_text_priority = 100,
-					use_focus = true,
-				},
-				current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
-				sign_priority = 6,
-				update_debounce = 100,
-				status_formatter = nil, -- Use default
-				max_file_length = 40000, -- Disable if file is longer than this (in lines)
-				preview_config = {
-					-- Options passed to nvim_open_win
-					style = 'minimal',
-					relative = 'cursor',
-					row = 0,
-					col = 1
-				},
-			},
-			config = function(_, opts)
-				opts.on_attach = function(bufnr)
-					local gitsigns = require('gitsigns')
+						local function map(mode, l, r, opts)
+							opts = opts or {}
+							opts.buffer = bufnr
+							vim.keymap.set(mode, l, r, opts)
+						end
 
-					local function map(mode, l, r, opts)
-						opts = opts or {}
-						opts.buffer = bufnr
-						vim.keymap.set(mode, l, r, opts)
+						-- Navigation
+						map('n', ']c', function()
+							if vim.wo.diff then
+								vim.cmd.normal({']c', bang = true})
+							else
+								gitsigns.nav_hunk('next')
+							end
+						end, {desc = "move to next hunk in buffer"})
+
+						map('n', '[c', function()
+							if vim.wo.diff then
+								vim.cmd.normal({'[c', bang = true})
+							else
+								gitsigns.nav_hunk('prev')
+							end
+						end, {desc = "move to prev hunk in buffer"})
+
+						-- Actions
+						map('n', '<leader>hs', gitsigns.stage_hunk, {desc = "toggle hunk staging"})
+						map('n', '<leader>hr', gitsigns.reset_hunk, {desc = "reset hunk"})
+
+						map('v', '<leader>hs', function()
+							gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+						end, {desc = "stage selected hunk part"})
+
+						map('v', '<leader>hr', function()
+							gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+						end, {desc = "reset selected hunk part"})
+
+						map('n', '<leader>hS', gitsigns.stage_buffer, {desc = "stage buffer"})
+						map('n', '<leader>hR', gitsigns.reset_buffer, {desc = "reset buffer"})
+						map('n', '<leader>hp', gitsigns.preview_hunk, {desc = "preview hunk"})
+						map('n', '<leader>hi', gitsigns.preview_hunk_inline, {desc = "preview hunk inline"})
+						map('n', '<leader>hU', gitsigns.reset_buffer_index, {desc = "unstage buffer"})
+
+						map('n', '<leader>hb', function()
+							gitsigns.blame_line({ full = true })
+						end, {desc = "git blame line"}, {desc = "show git blame for line"})
+						map('n', '<leader>hB', gitsigns.blame, {desc = "show git blame for buffer"})
+						-- how is it different than the next one?
+						map('n', '<leader>hd', gitsigns.diffthis, {desc = "diff this? "})
+
+						map('n', '<leader>hD', function()
+							gitsigns.diffthis('~')
+						end, {desc = "diff this?? (ns) I think it diffs only changes IG?"})
+
+						-- go through the docs to understand this
+						map('n', '<leader>hQ', function() gitsigns.setqflist('all') end, {desc = "set qflist"})
+						map('n', '<leader>hq', gitsigns.setqflist, {desc = "list qflist"})
+
+						-- Toggles
+						map('n', '<leader>tb', gitsigns.toggle_current_line_blame, {desc = "toggle git line blame"})
+						map('n', '<leader>tw', gitsigns.toggle_word_diff, {desc = "toggle word difff"})
+
+						-- Text object
+						map({'o', 'x'}, 'ih', gitsigns.select_hunk, {desc = "select hunk"})
 					end
+					require('gitsigns').setup(opts)
+				end,
 
-					-- Navigation
-					map('n', ']c', function()
-						if vim.wo.diff then
-							vim.cmd.normal({']c', bang = true})
-						else
-							gitsigns.nav_hunk('next')
-						end
-					end, {desc = "move to next hunk in buffer"})
-
-					map('n', '[c', function()
-						if vim.wo.diff then
-							vim.cmd.normal({'[c', bang = true})
-						else
-							gitsigns.nav_hunk('prev')
-						end
-					end, {desc = "move to prev hunk in buffer"})
-
-					-- Actions
-					map('n', '<leader>hs', gitsigns.stage_hunk, {desc = "toggle hunk staging"})
-					map('n', '<leader>hr', gitsigns.reset_hunk, {desc = "reset hunk"})
-
-					map('v', '<leader>hs', function()
-						gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-					end, {desc = "stage selected hunk part"})
-
-					map('v', '<leader>hr', function()
-						gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-					end, {desc = "reset selected hunk part"})
-
-					map('n', '<leader>hS', gitsigns.stage_buffer, {desc = "stage buffer"})
-					map('n', '<leader>hR', gitsigns.reset_buffer, {desc = "reset buffer"})
-					map('n', '<leader>hp', gitsigns.preview_hunk, {desc = "preview hunk"})
-					map('n', '<leader>hi', gitsigns.preview_hunk_inline, {desc = "preview hunk inline"})
-					map('n', '<leader>hU', gitsigns.reset_buffer_index, {desc = "unstage buffer"})
-
-					map('n', '<leader>hb', function()
-						gitsigns.blame_line({ full = true })
-					end, {desc = "git blame line"}, {desc = "show git blame for line"})
-					map('n', '<leader>hB', gitsigns.blame, {desc = "show git blame for buffer"})
-					-- how is it different than the next one?
-					map('n', '<leader>hd', gitsigns.diffthis, {desc = "diff this? "})
-
-					map('n', '<leader>hD', function()
-						gitsigns.diffthis('~')
-					end, {desc = "diff this?? (ns) I think it diffs only changes IG?"})
-
-					-- go through the docs to understand this
-					map('n', '<leader>hQ', function() gitsigns.setqflist('all') end, {desc = "set qflist"})
-					map('n', '<leader>hq', gitsigns.setqflist, {desc = "list qflist"})
-
-					-- Toggles
-					map('n', '<leader>tb', gitsigns.toggle_current_line_blame, {desc = "toggle git line blame"})
-					map('n', '<leader>tw', gitsigns.toggle_word_diff, {desc = "toggle word difff"})
-
-					-- Text object
-					map({'o', 'x'}, 'ih', gitsigns.select_hunk, {desc = "select hunk"})
-				end
-				require('gitsigns').setup(opts)
-			end,
-
-		}
-	},
+			}
+		},
 	-- if you dont need the below options you can remove the spec and below and just pass the list of plugins
 	-- Configure any other settings here. See the documentation for more details.
 	-- colorscheme that will be used when installing plugins.

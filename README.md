@@ -8,7 +8,7 @@ Thinking of adding the following
     - [ ] for whichKey see how to go about adding dev icons, ideally something across the terminal would be great 
 - [ ] completions
     - [ ] I want good autocompletions on what I am using for bash, go, python, c lang
-- [ ] telescope
+- [x] telescope
     - [x] installation done
     - [x] figure out how to scroll through results buffer and preview buffer
         - got confused between results and preview buffer mapped to values which feels comfortable
@@ -16,6 +16,7 @@ Thinking of adding the following
         - not satisfied but for now its okay IG, lets complete the others and come back to this one
     - mini.pick and fzf-lua (or fzf) seems to be the alternatives present for telescope
     - LOOK: Okay telescope has some git commands like bcommits etc, lets go through them when possible
+    - removed telescope I think I should have just kept telescope without setting any keymaps to compare some features with snacks for now lets add it back
 - [ ] LSP functionality
 
 - [ ] git fugitive or neovim equivalent
@@ -27,8 +28,12 @@ Thinking of adding the following
     - maybe its not additional learning, its just that I already have the tools for creating new branch, deleting going through stash etc, it just feels like lazy git too much for that, doing that in neovim feels appealing
     - the qflist seems near to what I need so yeah lazygit seems too much for what I need
 - [ ] oil.nvim want to try this out
-- [ ] image support
+- [x] image support
     - kitty seems plenty fast with image viewing, but image.nvim seems very slow in displaying the image in my terminal, lets see some videos if something can be done
+    - [x] lets replace 3rd/image.nvim with snacks nvim, lets see if possible to install only images but its okay if I need to install all
+        - yeah itseems to be loading faster or feels like loading faster
+        - maybe I should just use snacks picker instead of telescope
+
 - [ ] I think folke has todo plugin or something related to it, I like how it highlights those words lets add it here
 - [ ] Add nvim lua status line https://github.com/nvim-lualine/lualine.nvim -> gives helpful information on branches and other things 
 - For some reason I dont wanna install icon packs like mini or dev icons, but I dont know why
@@ -40,3 +45,4 @@ side thoughts
 - the quickfixlist and loclist seems to be very old features of vim go through it once -> https://youtu.be/aKG9uR6LhX4
     - https://www.reddit.com/r/neovim/comments/17y0gnl/what_are_some_cooluseful_ways_you_guys_use/
     - https://www.reddit.com/r/neovim/comments/1o2aeoj/how_do_you_use_quickfix_list/
+    - https://www.youtube.com/watch?v=AuXZA-xCv04
