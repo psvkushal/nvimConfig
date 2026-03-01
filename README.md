@@ -18,7 +18,6 @@ Thinking of adding the following
     - LOOK: Okay telescope has some git commands like bcommits etc, lets go through them when possible
     - removed telescope I think I should have just kept telescope without setting any keymaps to compare some features with snacks for now lets add it back
 - [ ] LSP functionality
-
 - [ ] git fugitive or neovim equivalent
     - [x] setup gitsigns, with userful hunk movement and showing up of gitblame
         - for now this seems to be sufficient
@@ -27,15 +26,14 @@ Thinking of adding the following
     - IG a good way to stage all the files and then commit would be great, IG lazyGit might be good idea for that, but I dont like lazygit feels like additionall workflow learning for something I can get via github or gitlab, which doesnt feel appealing, maybe good way to check things before pushing but again, I dont think I will be using the full power of that workflow right now
     - maybe its not additional learning, its just that I already have the tools for creating new branch, deleting going through stash etc, it just feels like lazy git too much for that, doing that in neovim feels appealing
     - the qflist seems near to what I need so yeah lazygit seems too much for what I need
-- [ ] oil.nvim want to try this out
 - [x] image support
     - kitty seems plenty fast with image viewing, but image.nvim seems very slow in displaying the image in my terminal, lets see some videos if something can be done
     - [x] lets replace 3rd/image.nvim with snacks nvim, lets see if possible to install only images but its okay if I need to install all
         - yeah itseems to be loading faster or feels like loading faster
         - maybe I should just use snacks picker instead of telescope
-
-- [ ] I think folke has todo plugin or something related to it, I like how it highlights those words lets add it here
+- [x] I think folke has todo plugin or something related to it, I like how it highlights those words lets add it here
 - [ ] Add nvim lua status line https://github.com/nvim-lualine/lualine.nvim -> gives helpful information on branches and other things 
+- [ ] oil.nvim want to try this out
 - For some reason I dont wanna install icon packs like mini or dev icons, but I dont know why
 
 
@@ -46,3 +44,7 @@ side thoughts
     - https://www.reddit.com/r/neovim/comments/17y0gnl/what_are_some_cooluseful_ways_you_guys_use/
     - https://www.reddit.com/r/neovim/comments/1o2aeoj/how_do_you_use_quickfix_list/
     - https://www.youtube.com/watch?v=AuXZA-xCv04
+- How to setup floating window is interesting for me https://www.youtube.com/watch?v=7Kzv3wUHtyU
+- https://github.com/bngarren/checkmate.nvim -> This checklist plugin looks interesting
+- what is tags, tag stack in neovim
+- why is LOOK: not rendering here in markdown files
