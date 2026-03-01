@@ -48,6 +48,8 @@ unhappy with how I did lsp config, hopefully with nvim 0.12 a good way will be i
 
 Not exactly bad, but I would like to see a way where in quickfix list, when I am at a point in the cursor should move to that buffer, not sure how it will go, but feels that would be cool
 
+Though this was an interesting exercise, IG why was I putting this exercise away for such a long time huh? that feels weird
+
 
 side thoughts 
 - think about using alt-h,j,k,l instead of <c-w>-h,j,k,l and similar operations <c-w> replace it with alt, <c-w>-> and <c-w>-< to increase and decrease the size of the window,
