@@ -106,6 +106,13 @@ vim.api.nvim_create_user_command('GitBlameLine', function()
 	print(vim.fn.system({ 'git', 'blame', '-L', line_number .. ',+1', filename }))
 end, { desc = 'Print the git blame for the current line' })
 
+vim.diagnostic.config({
+	-- I like it showing up in line compared to as text IG
+	-- virtual_text = true,
+	virtual_lines = true,
+	underline = true,
+})
+
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
@@ -156,7 +163,255 @@ require("lazy").setup({
 			"folke/which-key.nvim",
 			-- there might be additional settings might be required
 		},{
+			-- Copy pasted from kickstart nvim, I dont understand how to setup the LSP properyly, and right now I dont feel like spending that time
+			-- TODO: spend sometime understanding this config, basically I want to be able to trim this config somewhat
+			-- and learn the lsp behaviours I could use right now kinda depend on the snacks lsp keymaps, want to build my own understanding what are available what needs to be depend on snacks for
+			-- Main LSP Configuration
+			'neovim/nvim-lspconfig',
+			dependencies = {
+				-- Automatically install LSPs and related tools to stdpath for Neovim
+				-- Mason must be loaded before its dependents so we need to set it up here.
+				-- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
+				{
+					'mason-org/mason.nvim',
+					---@module 'mason.settings'
+					---@type MasonSettings
+					---@diagnostic disable-next-line: missing-fields
+					opts = {},
+				},
+				-- Maps LSP server names between nvim-lspconfig and Mason package names.
+				'mason-org/mason-lspconfig.nvim',
+				'WhoIsSethDaniel/mason-tool-installer.nvim',
+
+				-- Useful status updates for LSP.
+				{ 'j-hui/fidget.nvim', opts = {} },
+
+				-- Allows extra capabilities provided by blink.cmp
+				'saghen/blink.cmp',
+			},
+			config = function()
+				-- Brief aside: **What is LSP?**
+				--
+				-- LSP is an initialism you've probably heard, but might not understand what it is.
+				--
+				-- LSP stands for Language Server Protocol. It's a protocol that helps editors
+				-- and language tooling communicate in a standardized fashion.
+				--
+				-- In general, you have a "server" which is some tool built to understand a particular
+				-- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
+				-- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
+				-- processes that communicate with some "client" - in this case, Neovim!
+				--
+				-- LSP provides Neovim with features like:
+				--  - Go to definition
+				--  - Find references
+				--  - Autocompletion
+				--  - Symbol Search
+				--  - and more!
+				--
+				-- Thus, Language Servers are external tools that must be installed separately from
+				-- Neovim. This is where `mason` and related plugins come into play.
+				--
+				-- If you're wondering about lsp vs treesitter, you can check out the wonderfully
+				-- and elegantly composed help section, `:help lsp-vs-treesitter`
+
+				--  This function gets run when an LSP attaches to a particular buffer.
+				--    That is to say, every time a new file is opened that is associated with
+				--    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
+				--    function will be executed to configure the current buffer
+				--
+				--    self notes from here to understand lsp, reddit doesnt seem much helpful here, want to setup lsp and completion with least effort
+				--    creating LspAttach autocommands
+				vim.api.nvim_create_autocmd('LspAttach', {
+					group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
+					callback = function(event)
+						-- NOTE: Remember that Lua is a real programming language, and as such it is possible
+						-- to define small helper and utility functions so you don't have to repeat yourself.
+						--
+						-- In this case, we create a function that lets us more easily define mappings specific
+						-- for LSP related items. It sets the mode, buffer and description for us each time.
+						local map = function(keys, func, desc, mode)
+							mode = mode or 'n'
+							vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+						end
+
+						-- Rename the variable under your cursor.
+						--  Most Language Servers support renaming across files, etc.
+						map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
+
+						-- Execute a code action, usually your cursor needs to be on top of an error
+						-- or a suggestion from your LSP for this to activate.
+						map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
+
+						-- WARN: This is not Goto Definition, this is Goto Declaration.
+						--  For example, in C this would take you to the header.
+						map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+
+						-- The following two autocommands are used to highlight references of the
+						-- word under your cursor when your cursor rests there for a little while.
+						--    See `:help CursorHold` for information about when this is executed
+						--
+						-- When you move your cursor, the highlights will be cleared (the second autocommand).
+						local client = vim.lsp.get_client_by_id(event.data.client_id)
+						if client and client:supports_method('textDocument/documentHighlight', event.buf) then
+							local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+							vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+								buffer = event.buf,
+								group = highlight_augroup,
+								callback = vim.lsp.buf.document_highlight,
+							})
+
+							vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+								buffer = event.buf,
+								group = highlight_augroup,
+								callback = vim.lsp.buf.clear_references,
+							})
+
+							vim.api.nvim_create_autocmd('LspDetach', {
+								group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+								callback = function(event2)
+									vim.lsp.buf.clear_references()
+									vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+								end,
+							})
+						end
+
+						-- The following code creates a keymap to toggle inlay hints in your
+						-- code, if the language server you are using supports them
+						--
+						-- This may be unwanted, since they displace some of your code
+						if client and client:supports_method('textDocument/inlayHint', event.buf) then
+							map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+						end
+					end,
+				})
+
+				-- Enable the following language servers
+				--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
+				--  See `:help lsp-config` for information about keys and how to configure
+				---@type table<string, vim.lsp.Config>
+				local servers = {
+					clangd = {},
+					gopls = {},
+					pyright = {},
+					rust_analyzer = {},
+					bashls = {},
+					--
+					-- Some languages (like typescript) have entire language plugins that can be useful:
+					--    https://github.com/pmizio/typescript-tools.nvim
+					--
+					-- But for many setups, the LSP (`ts_ls`) will work just fine
+					-- ts_ls = {},
+
+					stylua = {}, -- Used to format Lua code
+
+					-- Special Lua Config, as recommended by neovim help docs
+					lua_ls = {
+						on_init = function(client)
+							if client.workspace_folders then
+								local path = client.workspace_folders[1].name
+								if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
+							end
+
+							client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+								runtime = {
+									version = 'LuaJIT',
+									path = { 'lua/?.lua', 'lua/?/init.lua' },
+								},
+								workspace = {
+									checkThirdParty = false,
+									-- NOTE: this is a lot slower and will cause issues when working on your own configuration.
+									--  See https://github.com/neovim/nvim-lspconfig/issues/3189
+									library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
+										'${3rd}/luv/library',
+										'${3rd}/busted/library',
+									}),
+								},
+							})
+						end,
+						settings = {
+							Lua = {},
+						},
+					},
+				}
+
+				-- Ensure the servers and tools above are installed
+				--
+				-- To check the current status of installed tools and/or manually install
+				-- other tools, you can run
+				--    :Mason
+				--
+				-- You can press `g?` for help in this menu.
+				local ensure_installed = vim.tbl_keys(servers or {})
+				vim.list_extend(ensure_installed, {
+					-- You can add other tools here that you want Mason to install
+				})
+
+				require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+				for name, server in pairs(servers) do
+					vim.lsp.config(name, server)
+					vim.lsp.enable(name)
+				end
+
+				-- since mason is already install/loaded IG I can use this here to configure how the diagnostic should show up
+
+			end,
+		}, {
+			'saghen/blink.cmp',
+			-- optional: provides snippets for the snippet source
+			dependencies = { 'rafamadriz/friendly-snippets' },
+
+			-- use a release tag to download pre-built binaries, not sure if I want to use this, dont wanna be on nightly
+			version = '1.*',
+			-- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
+			-- build = 'cargo build --release',
+			-- If you use nix, you can build from source using latest nightly rust with:
+			-- build = 'nix run .#build-plugin',
+
+			---@module 'blink.cmp'
+			---@type blink.cmp.Config
+			opts = {
+				-- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
+				-- 'super-tab' for mappings similar to vscode (tab to accept)
+				-- 'enter' for enter to accept
+				-- 'none' for no mappings
+				--
+				-- All presets have the following mappings:
+				-- C-space: Open menu or open docs if already open
+				-- C-n/C-p or Up/Down: Select next/previous item
+				-- C-e: Hide menu
+				-- C-k: Toggle signature help (if signature.enabled = true)
+				--
+				-- See :h blink-cmp-config-keymap for defining your own keymap
+				keymap = { preset = 'default' },
+
+				appearance = {
+					-- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
+					-- Adjusts spacing to ensure icons are aligned
+					nerd_font_variant = 'mono'
+				},
+
+				-- (Default) Only show the documentation popup when manually triggered
+				completion = { documentation = { auto_show = false } },
+
+				-- Default list of enabled providers defined so that you can extend it
+				-- elsewhere in your config, without redefining it, due to `opts_extend`
+				sources = {
+					default = { 'lsp', 'path', 'snippets', 'buffer' },
+				},
+
+				-- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
+				-- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
+				-- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
+				--
+				-- See the fuzzy documentation for more information
+				fuzzy = { implementation = "prefer_rust_with_warning" }
+			},
+			opts_extend = { "sources.default" }
+		},{
 			"folke/snacks.nvim",
+			dependencies = { "folke/todo-comments.nvim" },
 			priority = 1000,
 			lazy = false,
 			opts = {
@@ -174,7 +429,7 @@ require("lazy").setup({
 								["<c-j>"] = { "preview_scroll_down", mode = { "n", "i" } },
 								-- if wrapping was there the below would have been useful for now IG lets ignore these
 								["<c-l>"] = { "preview_scroll_left", mode = { "n", "i" } },
-								["<c-h>"] = { "preview_scroll_righ", mode = { "n", "i" } },
+								["<c-h>"] = { "preview_scroll_right", mode = { "n", "i" } },
 							},
 						},
 					},
@@ -207,7 +462,7 @@ require("lazy").setup({
 				{ "<leader>sG", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" }, --  not exactly used but need to look for different command
 				{ "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
 				{ "<leader>sR", function() Snacks.picker.resume() end, desc = "Resume" },
-				
+
 				-- shortcuts not so sure might be useful
 				{ "<leader>sF", function() Snacks.picker.smart() end, desc = "Smart Find Files" }, -- its like do I need entire global search sometimes useful
 				{ "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" }, -- I am not sure what the notification maybe if llm is integrated might be useful?
@@ -230,7 +485,8 @@ require("lazy").setup({
 				{ "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
 				{ "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
 
-				-- need to setup LSP to figure out if they are useful
+				-- need to setup LSP to figure out if they are useful, I think they can be setup without snacks, wonder why his is being set here
+				-- TODO: I dont wanna depend on snacks interface for this, lets do it without snacks
 				{ "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
 				{ "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
 				{ "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
@@ -241,12 +497,18 @@ require("lazy").setup({
 				{ "<leader>ss", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
 				{ "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
 
+				-- depends on todo_comments, not sure why is throwing warning here
+				{ "<leader>st", function() Snacks.picker.todo_comments() end, desc = "Todo" },
+
 			},
 			config = function(_, opts)
 				require("snacks").setup(opts)
 			end
 		},{
+			-- LOOK: currently in gutter there seems to be only one possible synbol, see if its possible to keep 2 symbols or more side by side and have max gutter size
 			"folke/todo-comments.nvim",
+			-- I think the enabled flag is present for cases where you dont wanna install the plugin seperately if its already being pulled from other plugin IG, maybe this is not required here
+			-- enabled = true,
 			dependencies = { "nvim-lua/plenary.nvim" },
 			opts = {
 				-- your configuration comes here
@@ -267,9 +529,6 @@ require("lazy").setup({
 					NOTE = { icon = " ", color = "hint", alt = { "INFO", "LOOK" } },
 					TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
 				},
-			},
-			keys = {
-				{ "<leader>st", function() Snacks.picker.todo_comments() end, desc = "Todo" },
 			},
 		},{
 				"lewis6991/gitsigns.nvim",
@@ -326,10 +585,10 @@ require("lazy").setup({
 					opts.on_attach = function(bufnr)
 						local gitsigns = require('gitsigns')
 
-						local function map(mode, l, r, opts)
-							opts = opts or {}
-							opts.buffer = bufnr
-							vim.keymap.set(mode, l, r, opts)
+						local function map(mode, l, r, opt)
+							opt = opt or {}
+							opt.buffer = bufnr
+							vim.keymap.set(mode, l, r, opt)
 						end
 
 						-- Navigation
@@ -369,7 +628,8 @@ require("lazy").setup({
 
 						map('n', '<leader>hb', function()
 							gitsigns.blame_line({ full = true })
-						end, {desc = "git blame line"}, {desc = "show git blame for line"})
+						end, {desc = "show git blame line"})
+
 						map('n', '<leader>hB', gitsigns.blame, {desc = "show git blame for buffer"})
 						-- how is it different than the next one?
 						map('n', '<leader>hd', gitsigns.diffthis, {desc = "diff this? "})

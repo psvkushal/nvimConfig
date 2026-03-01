@@ -5,9 +5,10 @@ Thinking of adding the following
     - [x] see if its possible to make the background darker in gruvbox as close to black as possible
         - did this but I think lets use it when I am bored of this one
 - [x] whichkey
-    - [ ] for whichKey see how to go about adding dev icons, ideally something across the terminal would be great 
+    - [ ] ~~for whichKey see how to go about adding dev icons, ideally something across the terminal would be great~~
+        - For now lets do it via the standard mini dev icons or nvim dev icons lets ignore f
 - [ ] completions
-    - [ ] I want good autocompletions on what I am using for bash, go, python, c lang
+    - [x] I want good autocompletions on what I am using for bash, go, python, c lang
 - [x] telescope
     - [x] installation done
     - [x] figure out how to scroll through results buffer and preview buffer
@@ -17,7 +18,7 @@ Thinking of adding the following
     - mini.pick and fzf-lua (or fzf) seems to be the alternatives present for telescope
     - LOOK: Okay telescope has some git commands like bcommits etc, lets go through them when possible
     - removed telescope I think I should have just kept telescope without setting any keymaps to compare some features with snacks for now lets add it back
-- [ ] LSP functionality
+- [x] LSP functionality
 - [ ] git fugitive or neovim equivalent
     - [x] setup gitsigns, with userful hunk movement and showing up of gitblame
         - for now this seems to be sufficient
@@ -32,9 +33,20 @@ Thinking of adding the following
         - yeah itseems to be loading faster or feels like loading faster
         - maybe I should just use snacks picker instead of telescope
 - [x] I think folke has todo plugin or something related to it, I like how it highlights those words lets add it here
+
+- For some reason I dont wanna install icon packs like mini or dev icons, but I dont know why
+- add that K keyword  to hover documentation -> itseems already by default in neovim so not exactly required
+- For now I am going to keep git fugitive aside
+
+IG these are remaining
 - [ ] Add nvim lua status line https://github.com/nvim-lualine/lualine.nvim -> gives helpful information on branches and other things 
 - [ ] oil.nvim want to try this out
-- For some reason I dont wanna install icon packs like mini or dev icons, but I dont know why
+
+happy with lsp completion and having single config file, and how I was able to be comfortable with just writing the config, I dont think I will feel scared of installing new plugins now, atleast if they are single plugins and they are simple
+
+unhappy with how I did lsp config, hopefully with nvim 0.12 a good way will be ironed out, I did not understand what I did so not so comfortable with it, and shortcuts related to LSP I dont understand where to go with it
+
+Not exactly bad, but I would like to see a way where in quickfix list, when I am at a point in the cursor should move to that buffer, not sure how it will go, but feels that would be cool
 
 
 side thoughts 
@@ -48,3 +60,5 @@ side thoughts
 - https://github.com/bngarren/checkmate.nvim -> This checklist plugin looks interesting
 - what is tags, tag stack in neovim
 - why is LOOK: not rendering here in markdown files
+- IG :h lsp-vs-treesitter where they talk about ctags and tags, I want to understand what i_CTRL-X_CTRL-] means, does it mean in insert mode, ctrl-x and ctrl-] ?
+- hoping I will understand more by going through tj video https://youtu.be/m8C0Cq9Uv9o
