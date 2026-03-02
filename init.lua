@@ -113,6 +113,27 @@ vim.diagnostic.config({
 	underline = true,
 })
 
+-- keymap for toggle netrw
+-- vim.cmd("Rex") is good way to return from netrw but,
+-- for cases where there is no window to return to causes issue
+-- using this robust handling for that case
+-- cant you just remember Ex and Rex??🤔
+-- I feel this is not working properly and returning buggy mess, lets address it later, is it needed at all?
+vim.keymap.set("n", "\\", function()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    if vim.bo[buf].filetype == "netrw" then
+      if #vim.api.nvim_list_wins() > 1 then
+        vim.api.nvim_win_close(win, false)
+      else
+        print("No other window to return to")
+      end
+      return
+    end
+  end
+  vim.cmd("Ex")
+end, { desc = "Toggle netrw" })
+
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
@@ -665,9 +686,30 @@ require("lazy").setup({
 			dependencies = { 'nvim-mini/mini.icons' },
 			opts = {},
 			config = function (_, opts)
-				-- claude says this is required lets try it
+				-- claude says this is required lets try it -> Okay its required if I remove it some icons are not getting rendered they are rendered with default icon
+				-- I think I will use this for few days and move back to nvim-web-devicons I dont wanna additional code to do the same thing 
+				-- Though ig this is an illusion of choice here lol 🤣 
 				require('mini.icons').mock_nvim_web_devicons()
 				require("lualine").setup(opts)
+			end
+		},{
+			-- already have explorer from snacks so not sure how useful would be this one
+			-- it seems this plugin is more feature rich than snacks explorer, for now I will just leave this as is
+			"nvim-neo-tree/neo-tree.nvim",
+			branch = "v3.x",
+			dependencies = {
+				"nvim-lua/plenary.nvim",
+				"MunifTanjim/nui.nvim",
+				"nvim-tree/nvim-web-devicons", -- optional, but recommended
+			},
+			opts = {},
+			lazy = false, -- neo-tree will lazily load itself
+			-- These additional plugins were given as nice to have with neo-tree for now not adding it as I dont see the need but keeping it here for reminder
+			-- antosha417/nvim-lsp-file-operations -> for providing lsp for file operations whether its valid or not etc that a nice feature
+			-- s1n7ax/nvim-window-picker not sure about this one just gives windowID not sure I think its useful right now
+			config = function(_, opts)
+				require("neo-tree").setup(opts)
+				-- vim.keymap.set("n", "\\", ":Neotree toggle<CR>")
 			end
 		},{
 			-- theme I want to try out
