@@ -64,3 +64,11 @@ side thoughts
 - why is LOOK: not rendering here in markdown files
 - IG :h lsp-vs-treesitter where they talk about ctags and tags, I want to understand what i_CTRL-X_CTRL-] means, does it mean in insert mode, ctrl-x and ctrl-] ?
 - hoping I will understand more by going through tj video https://youtu.be/m8C0Cq9Uv9o
+
+
+Notes related to LSP
+- is lstAttach something neovim checks for how is a random name autocommand working here, is it some default name everyone aggred upon?
+- also realised for lsp suggestion and diagnostics I dont really need the completions? completions is different from error pointing huh
+- https://youtu.be/ScIjavsi7LE (I think maybe watching before video might help, he used mason and I dont see nvim-lsp config setup or blink.cmp setting up, I dont wanna think about it now, I have a working config lets move on for now) -> This seems to be good video inaddition to tj video above
+- https://youtu.be/bTWWFQZqzyI
+- going to definition decleration etc, they are provided by lsp, only completion is provided by completion oh okay, I think I might be able to remove the snacks decleartion with some reading and effort

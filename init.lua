@@ -169,6 +169,7 @@ require("lazy").setup({
 			-- Main LSP Configuration
 			'neovim/nvim-lspconfig',
 			dependencies = {
+				-- and how are these dependencies used and are needed
 				-- Automatically install LSPs and related tools to stdpath for Neovim
 				-- Mason must be loaded before its dependents so we need to set it up here.
 				-- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
@@ -222,6 +223,8 @@ require("lazy").setup({
 				--
 				--    self notes from here to understand lsp, reddit doesnt seem much helpful here, want to setup lsp and completion with least effort
 				--    creating LspAttach autocommands
+				--    not exactly sure whats happening here, where are we showing the blink cmp capabilities addition?
+				--    IG in the lsp config setup I did not understand whats happening here
 				vim.api.nvim_create_autocmd('LspAttach', {
 					group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
 					callback = function(event)
@@ -286,6 +289,7 @@ require("lazy").setup({
 					end,
 				})
 
+				-- configuring the lsp servers here
 				-- Enable the following language servers
 				--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 				--  See `:help lsp-config` for information about keys and how to configure
@@ -306,6 +310,7 @@ require("lazy").setup({
 					stylua = {}, -- Used to format Lua code
 
 					-- Special Lua Config, as recommended by neovim help docs
+					-- did not understand what they are doing specficallly here
 					lua_ls = {
 						on_init = function(client)
 							if client.workspace_folders then
@@ -358,6 +363,7 @@ require("lazy").setup({
 
 			end,
 		}, {
+			-- okay IG this is used for defintion purposes
 			'saghen/blink.cmp',
 			-- optional: provides snippets for the snippet source
 			dependencies = { 'rafamadriz/friendly-snippets' },
@@ -411,6 +417,7 @@ require("lazy").setup({
 			opts_extend = { "sources.default" }
 		},{
 			"folke/snacks.nvim",
+			-- LOOK: I think a better way to do this is to keep folke/snacks.nvim as dependency for todo-comments, and move the key for todo there
 			dependencies = { "folke/todo-comments.nvim" },
 			priority = 1000,
 			lazy = false,
@@ -531,129 +538,151 @@ require("lazy").setup({
 				},
 			},
 		},{
-				"lewis6991/gitsigns.nvim",
-				opts = {
-					signs = {
-						add          = { text = '+' },
-						change       = { text = '┃' },
-						delete       = { text = '_' },
-						topdelete    = { text = '‾' },
-						changedelete = { text = '~' },
-						untracked    = { text = '┆' },
-					},
-					signs_staged = {
-						add          = { text = '+' },
-						change       = { text = '┃' },
-						delete       = { text = '_' },
-						topdelete    = { text = '‾' },
-						changedelete = { text = '~' },
-						untracked    = { text = '┆' },
-					},
-					signs_staged_enable = true,
-					signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
-					numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
-					linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
-					word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
-					watch_gitdir = {
-						follow_files = true
-					},
-					auto_attach = true,
-					attach_to_untracked = false,
-					current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
-					current_line_blame_opts = {
-						virt_text = true,
-						virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-						delay = 1000,
-						ignore_whitespace = false,
-						virt_text_priority = 100,
-						use_focus = true,
-					},
-					current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
-					sign_priority = 6,
-					update_debounce = 100,
-					status_formatter = nil, -- Use default
-					max_file_length = 40000, -- Disable if file is longer than this (in lines)
-					preview_config = {
-						-- Options passed to nvim_open_win
-						style = 'minimal',
-						relative = 'cursor',
-						row = 0,
-						col = 1
-					},
+			"lewis6991/gitsigns.nvim",
+			opts = {
+				signs = {
+					add          = { text = '+' },
+					change       = { text = '┃' },
+					delete       = { text = '_' },
+					topdelete    = { text = '‾' },
+					changedelete = { text = '~' },
+					untracked    = { text = '┆' },
 				},
-				config = function(_, opts)
-					opts.on_attach = function(bufnr)
-						local gitsigns = require('gitsigns')
+				signs_staged = {
+					add          = { text = '+' },
+					change       = { text = '┃' },
+					delete       = { text = '_' },
+					topdelete    = { text = '‾' },
+					changedelete = { text = '~' },
+					untracked    = { text = '┆' },
+				},
+				signs_staged_enable = true,
+				signcolumn = true,  -- Toggle with `:Gitsigns toggle_signs`
+				numhl      = false, -- Toggle with `:Gitsigns toggle_numhl`
+				linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+				word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+				watch_gitdir = {
+					follow_files = true
+				},
+				auto_attach = true,
+				attach_to_untracked = false,
+				current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+				current_line_blame_opts = {
+					virt_text = true,
+					virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
+					delay = 1000,
+					ignore_whitespace = false,
+					virt_text_priority = 100,
+					use_focus = true,
+				},
+				current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
+				sign_priority = 6,
+				update_debounce = 100,
+				status_formatter = nil, -- Use default
+				max_file_length = 40000, -- Disable if file is longer than this (in lines)
+				preview_config = {
+					-- Options passed to nvim_open_win
+					style = 'minimal',
+					relative = 'cursor',
+					row = 0,
+					col = 1
+				},
+			},
+			config = function(_, opts)
+				opts.on_attach = function(bufnr)
+					local gitsigns = require('gitsigns')
 
-						local function map(mode, l, r, opt)
-							opt = opt or {}
-							opt.buffer = bufnr
-							vim.keymap.set(mode, l, r, opt)
-						end
-
-						-- Navigation
-						map('n', ']c', function()
-							if vim.wo.diff then
-								vim.cmd.normal({']c', bang = true})
-							else
-								gitsigns.nav_hunk('next')
-							end
-						end, {desc = "move to next hunk in buffer"})
-
-						map('n', '[c', function()
-							if vim.wo.diff then
-								vim.cmd.normal({'[c', bang = true})
-							else
-								gitsigns.nav_hunk('prev')
-							end
-						end, {desc = "move to prev hunk in buffer"})
-
-						-- Actions
-						map('n', '<leader>hs', gitsigns.stage_hunk, {desc = "toggle hunk staging"})
-						map('n', '<leader>hr', gitsigns.reset_hunk, {desc = "reset hunk"})
-
-						map('v', '<leader>hs', function()
-							gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-						end, {desc = "stage selected hunk part"})
-
-						map('v', '<leader>hr', function()
-							gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-						end, {desc = "reset selected hunk part"})
-
-						map('n', '<leader>hS', gitsigns.stage_buffer, {desc = "stage buffer"})
-						map('n', '<leader>hR', gitsigns.reset_buffer, {desc = "reset buffer"})
-						map('n', '<leader>hp', gitsigns.preview_hunk, {desc = "preview hunk"})
-						map('n', '<leader>hi', gitsigns.preview_hunk_inline, {desc = "preview hunk inline"})
-						map('n', '<leader>hU', gitsigns.reset_buffer_index, {desc = "unstage buffer"})
-
-						map('n', '<leader>hb', function()
-							gitsigns.blame_line({ full = true })
-						end, {desc = "show git blame line"})
-
-						map('n', '<leader>hB', gitsigns.blame, {desc = "show git blame for buffer"})
-						-- how is it different than the next one?
-						map('n', '<leader>hd', gitsigns.diffthis, {desc = "diff this? "})
-
-						map('n', '<leader>hD', function()
-							gitsigns.diffthis('~')
-						end, {desc = "diff this?? (ns) I think it diffs only changes IG?"})
-
-						-- go through the docs to understand this
-						map('n', '<leader>hQ', function() gitsigns.setqflist('all') end, {desc = "set qflist"})
-						map('n', '<leader>hq', gitsigns.setqflist, {desc = "list qflist"})
-
-						-- Toggles
-						map('n', '<leader>tb', gitsigns.toggle_current_line_blame, {desc = "toggle git line blame"})
-						map('n', '<leader>tw', gitsigns.toggle_word_diff, {desc = "toggle word difff"})
-
-						-- Text object
-						map({'o', 'x'}, 'ih', gitsigns.select_hunk, {desc = "select hunk"})
+					local function map(mode, l, r, opt)
+						opt = opt or {}
+						opt.buffer = bufnr
+						vim.keymap.set(mode, l, r, opt)
 					end
-					require('gitsigns').setup(opts)
-				end,
 
-			}
-		},
+					-- Navigation
+					map('n', ']c', function()
+						if vim.wo.diff then
+							vim.cmd.normal({']c', bang = true})
+						else
+							gitsigns.nav_hunk('next')
+						end
+					end, {desc = "move to next hunk in buffer"})
+
+					map('n', '[c', function()
+						if vim.wo.diff then
+							vim.cmd.normal({'[c', bang = true})
+						else
+							gitsigns.nav_hunk('prev')
+						end
+					end, {desc = "move to prev hunk in buffer"})
+
+					-- Actions
+					map('n', '<leader>hs', gitsigns.stage_hunk, {desc = "toggle hunk staging"})
+					map('n', '<leader>hr', gitsigns.reset_hunk, {desc = "reset hunk"})
+
+					map('v', '<leader>hs', function()
+						gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+					end, {desc = "stage selected hunk part"})
+
+					map('v', '<leader>hr', function()
+						gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+					end, {desc = "reset selected hunk part"})
+
+					map('n', '<leader>hS', gitsigns.stage_buffer, {desc = "stage buffer"})
+					map('n', '<leader>hR', gitsigns.reset_buffer, {desc = "reset buffer"})
+					map('n', '<leader>hp', gitsigns.preview_hunk, {desc = "preview hunk"})
+					map('n', '<leader>hi', gitsigns.preview_hunk_inline, {desc = "preview hunk inline"})
+					map('n', '<leader>hU', gitsigns.reset_buffer_index, {desc = "unstage buffer"})
+
+					map('n', '<leader>hb', function()
+						gitsigns.blame_line({ full = true })
+					end, {desc = "show git blame line"})
+
+					map('n', '<leader>hB', gitsigns.blame, {desc = "show git blame for buffer"})
+					-- how is it different than the next one?
+					map('n', '<leader>hd', gitsigns.diffthis, {desc = "diff this? "})
+
+					map('n', '<leader>hD', function()
+						gitsigns.diffthis('~')
+					end, {desc = "diff this?? (ns) I think it diffs only changes IG?"})
+
+					-- go through the docs to understand this
+					map('n', '<leader>hQ', function() gitsigns.setqflist('all') end, {desc = "set qflist"})
+					map('n', '<leader>hq', gitsigns.setqflist, {desc = "list qflist"})
+
+					-- Toggles
+					map('n', '<leader>tb', gitsigns.toggle_current_line_blame, {desc = "toggle git line blame"})
+					map('n', '<leader>tw', gitsigns.toggle_word_diff, {desc = "toggle word difff"})
+
+					-- Text object
+					map({'o', 'x'}, 'ih', gitsigns.select_hunk, {desc = "select hunk"})
+				end
+				require('gitsigns').setup(opts)
+			end,
+
+		},{
+			'nvim-lualine/lualine.nvim',
+			-- dependencies = { 'nvim-tree/nvim-web-devicons' },
+			dependencies = { 'nvim-mini/mini.icons' },
+			opts = {},
+			config = function (_, opts)
+				-- claude says this is required lets try it
+				require('mini.icons').mock_nvim_web_devicons()
+				require("lualine").setup(opts)
+			end
+		},{
+			-- theme I want to try out
+			"catppuccin/nvim",
+			name = "catppuccin", -- this name is given to avoid confusion nice idea by distributor
+			priority = 1000
+			-- NOTE: I feel very comfortable with catppuccin mocha colorscheme
+		},{
+			-- theme I want to try out
+			"folke/tokyonight.nvim",
+			priority = 1000,
+			-- NOTE: also with tokyonight night also doesnt feel much diff from catppuccin mocha, it feels like darker catppuccin mocha
+			opts = {},
+		}
+	},
 	-- if you dont need the below options you can remove the spec and below and just pass the list of plugins
 	-- Configure any other settings here. See the documentation for more details.
 	-- colorscheme that will be used when installing plugins.
