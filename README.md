@@ -39,8 +39,10 @@ Thinking of adding the following
 - For now I am going to keep git fugitive aside
 
 IG these are remaining
-- [ ] Add nvim lua status line https://github.com/nvim-lualine/lualine.nvim -> gives helpful information on branches and other things 
-- [ ] oil.nvim want to try this out
+- [x] Add nvim lua status line https://github.com/nvim-lualine/lualine.nvim -> gives helpful information on branches and other things 
+- [ ] ~~oil.nvim want to try this out~~ (For now postponing this one)
+- [ ] code formatter
+
 
 happy with lsp completion and having single config file, and how I was able to be comfortable with just writing the config, I dont think I will feel scared of installing new plugins now, atleast if they are single plugins and they are simple
 
